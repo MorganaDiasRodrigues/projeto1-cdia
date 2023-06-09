@@ -33,5 +33,5 @@ for item in trends:
                 trend_text[trend_name] = tweets
 
 
-with open('../trends-data/processed_trends.json', 'a') as file:
+with open('../trends-data/tweets-trends.json', 'a') as file:
      file.write(json.dumps(trend_text))
