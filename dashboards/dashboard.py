@@ -1,4 +1,5 @@
 from dash import dcc, html, Dash
+import dash
 from dash.dependencies import Input, Output, State, MATCH, ALL
 import plotly.graph_objects as go
 import json
@@ -48,9 +49,9 @@ app.layout = html.Div([
     prevent_initial_call=True
 )
 def update_time_buttons(n_clicks):
-    ctx = Dash.callback_context
+    ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update
+        return dash.dcc.no_update
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_index = json.loads(button_id)['index']
@@ -76,7 +77,7 @@ def update_time_buttons(n_clicks):
     prevent_initial_call=True
 )
 def update_figure(n_clicks, selected_date):
-    ctx = Dash.callback_context
+    ctx = dash.callback_context
     if not ctx.triggered or not selected_date:
         return dash.no_update
     else:
@@ -98,9 +99,9 @@ def update_figure(n_clicks, selected_date):
     prevent_initial_call=True
 )
 def display_trend_info(n_clicks):
-    ctx = Dash.callback_context
+    ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update, dash.no_update
+        return dash.dcc.no_update, dash.dcc.no_update
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_index = json.loads(button_id)['index']

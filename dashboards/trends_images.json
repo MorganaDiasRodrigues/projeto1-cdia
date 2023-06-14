@@ -1,9 +1,9 @@
 {
     "#SpiderManAcrossTheSpiderVerse": {
         "images": [
-            {"path": "../imgs/spider1", "hex_distribution": {"#ffffff": 0.3, "#000000": 0.7}},
-            {"path": "../imgs/spider2", "hex_distribution": {"#ff0000": 0.6, "#00ff00": 0.2, "#0000ff": 0.2}},
-            {"path": "../imgs/spider3", "hex_distribution": {"#ffff00": 0.5, "#ff00ff": 0.5}}
+            {"path": "../imgs/spider1"},
+            {"path": "../imgs/spider2"},
+            {"path": "../imgs/spider3"}
         ]
     }
 }
