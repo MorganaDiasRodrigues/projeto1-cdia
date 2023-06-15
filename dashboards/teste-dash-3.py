@@ -27,16 +27,21 @@ def encode_image(image_file):
 
 # Define the app layout
 app.layout = html.Div([
-    html.Div([
-        html.Button(date, id={'type': 'date-button', 'index': i}, n_clicks=0) for i, date in enumerate(available_dates)
-    ], id='date-buttons'),
+    html.Div(id='date-buttons-container', children=[
+        html.Button(date, id={'type': 'date-button', 'index': i}, n_clicks=0, className='date-button') for i, date in enumerate(available_dates)
+    ]),
     html.Div(id='time-buttons'),
     html.Div(id='graph'),
-    html.Div("Select a trend name to see its color", id='trend-detail', style={'margin': '10px 0'}),
+    html.Div(id='trend-detail'),  # Added trend-detail id
+    html.Div("Please select a date to start", id='date-message', style={'margin': '10px 0'}),
+    html.Div(id='time-message', style={'margin': '10px 0'}),
+    html.Div(id='trend-message', style={'margin': '10px 0'}),
 ])
 
 @app.callback(
     Output('time-buttons', 'children'),
+    Output('date-message', 'style'),
+    Output('date-message', 'children'),
     Input({'type': 'date-button', 'index': ALL}, 'n_clicks'),
     State({'type': 'date-button', 'index': ALL}, 'children'),
     prevent_initial_call=True
@@ -44,18 +49,25 @@ app.layout = html.Div([
 def update_time_buttons(n_clicks, labels):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update
+        return dash.no_update, {'margin': '10px 0'}, "Please select a date to start"
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        button_index = json.loads(button_id)['index']
-        selected_date = labels[button_index]
+        button_info = json.loads(button_id)
+        selected_date = labels[button_info['index']]
 
         available_times = list(date_time_trends[selected_date].keys())
-        return [html.Button(time, id={'type': 'time-button', 'index': i, 'date': selected_date}, n_clicks=0) for i, time in
+
+        time_buttons = [html.Button(time, id={'type': 'time-button', 'index': i, 'date': selected_date}, n_clicks=0) for i, time in
                 enumerate(available_times)]
+
+        date_message_style = {'display': 'none'}  # Hide the message
+
+        return time_buttons, date_message_style, ""
 
 @app.callback(
     Output('graph', 'children'),
+    Output('time-message', 'style'),
+    Output('time-message', 'children'),
     Input({'type': 'time-button', 'index': ALL, 'date': ALL}, 'n_clicks'),
     State({'type': 'time-button', 'index': ALL, 'date': ALL}, 'children'),
     prevent_initial_call=True
@@ -63,7 +75,7 @@ def update_time_buttons(n_clicks, labels):
 def update_figure(n_clicks, labels):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update
+        return dash.no_update, {'margin': '10px 0'}, "Please select a time"
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_info = json.loads(button_id)
@@ -75,10 +87,14 @@ def update_figure(n_clicks, labels):
         ordered_list = html.Ol([html.Li(html.A(trend, id={'type': 'trend-link', 'index': i, 'date': selected_date}, href='#', style={'font-family': 'Arial, Helvetica, sans-serif'}))
                                 for i, trend in enumerate(trends)])
 
-        return ordered_list
+        time_message_style = {'display': 'none'}  # Hide the message
+
+        return ordered_list, time_message_style, ""
 
 @app.callback(
     Output('trend-detail', 'children'),
+    Output('trend-message', 'style'),
+    Output('trend-message', 'children'),
     Input({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'n_clicks'),
     State({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'children'),
     prevent_initial_call=True
@@ -86,7 +102,7 @@ def update_figure(n_clicks, labels):
 def update_trend_detail(n_clicks, labels):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update
+        return dash.no_update, {'margin': '10px 0'}, "Select a trend to see the color palette"
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_info = json.loads(button_id)
@@ -105,15 +121,12 @@ def update_trend_detail(n_clicks, labels):
                     image = images[j]
                     colors = image['dominant_colors']
                     color_names = list(colors.keys())
-                    color_percentages = [round(value * 100, 2) for value in colors.values()]
 
                     pie_chart = dcc.Graph(
                         figure=go.Figure(data=[go.Pie(
                             labels=color_names,
-                            values=color_percentages,
                             hoverinfo='label',
-                            textinfo='text',
-                            text=color_names,
+                            textinfo='none',
                             hole=0.3,
                             marker=dict(colors=color_names, line=dict(color='#FFFFFF', width=1))
                         )]),
@@ -131,9 +144,11 @@ def update_trend_detail(n_clicks, labels):
                 row = dbc.Row(row_charts)
                 rows.append(row)
 
-            return dbc.Container(rows)
+            trend_message_style = {'display': 'none'}  # Hide the message
+
+            return dbc.Container(rows), trend_message_style, ""
         else:
-            return html.P("There is no image saved for this trend")
+            return html.P("There is no image saved for this trend"), {'margin': '10px 0'}, ""
 
 
 if __name__ == '__main__':
