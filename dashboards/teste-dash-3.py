@@ -105,17 +105,23 @@ def update_trend_detail(n_clicks, labels):
                     image = images[j]
                     colors = image['dominant_colors']
                     color_names = list(colors.keys())
-                    color_values = list(colors.values())
+                    color_percentages = [round(value * 100, 2) for value in colors.values()]
 
                     pie_chart = dcc.Graph(
-                        figure=go.Figure(data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]),
+                        figure=go.Figure(data=[go.Pie(
+                            labels=color_names,
+                            values=color_percentages,
+                            hoverinfo='label',
+                            textinfo='text',
+                            text=color_names,
+                            hole=0.3,
+                            marker=dict(colors=color_names, line=dict(color='#FFFFFF', width=1))
+                        )]),
                         config={'displayModeBar': False}  # Hide the mode bar
                     )
 
-                    image_col = dbc.Col(html.Img(src=encode_image(image['path']), height=400))
-                    chart_col = dbc.Col([
-                        dbc.Row(html.Div(pie_chart))
-                    ], style={'textAlign': 'center'})
+                    image_col = dbc.Col(html.Img(src=encode_image(image['path']), style={'maxHeight': '350px', 'width': 'auto'}))
+                    chart_col = dbc.Col(html.Div(pie_chart), style={'textAlign': 'center', 'margin': '0 auto', 'font-size': '14px'})
 
                     row_images.append(image_col)
                     row_charts.append(chart_col)
@@ -128,6 +134,7 @@ def update_trend_detail(n_clicks, labels):
             return dbc.Container(rows)
         else:
             return html.P("There is no image saved for this trend")
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
