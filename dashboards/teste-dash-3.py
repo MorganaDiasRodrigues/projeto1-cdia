@@ -2,7 +2,7 @@ import base64
 import json
 from collections import Counter
 from io import BytesIO
-
+import time
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
@@ -32,7 +32,7 @@ app.layout = html.Div([
     ], id='date-buttons'),
     html.Div(id='time-buttons'),
     html.Div(id='graph'),
-    html.Div("Select a trend name to see its color", id='trend-detail')
+    html.Div("Select a trend name to see its color", id='trend-detail', style={'margin': '10px 0'}),
 ])
 
 @app.callback(
@@ -75,6 +75,7 @@ def update_figure(n_clicks, labels):
         ordered_list = html.Ol([html.Li(dcc.Link(trend, id={'type': 'trend-link', 'index': i, 'date': selected_date},
                                                  href='#', style={'font-family': 'Arial, Helvetica, sans-serif'}))
                                 for i, trend in enumerate(trends)])
+
         return ordered_list
 
 @app.callback(
@@ -92,29 +93,30 @@ def update_trend_detail(n_clicks, labels):
         button_info = json.loads(button_id)
         selected_trend = labels[button_info['index']].strip("#")
 
-        # Check if there are images for this trend
         if selected_trend in images_dict:
             images = images_dict[selected_trend]['images']
 
             rows = []
-            for i, image in enumerate(images):
-                colors = image['dominant_colors']
-                color_names = list(colors.keys())
-                color_values = list(colors.values())
+            for i in range(0, len(images), 2):
+                row_images = []
+                row_charts = []
+                for j in range(i, min(i + 2, len(images))):
+                    image = images[j]
+                    colors = image['dominant_colors']
+                    color_names = list(colors.keys())
+                    color_values = list(colors.values())
 
-                pie_chart = dcc.Graph(figure=go.Figure(data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]))
+                    pie_chart = dcc.Graph(figure=go.Figure(data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]))
 
-                rows.append(
-                    dbc.Row([
-                        dbc.Col(html.Img(src=encode_image(image['path']), height=200), width=6),
-                        dbc.Col(pie_chart, width=6)
-                    ])
-                )
+                    row_images.append(dbc.Col(html.Img(src=encode_image(image['path']), height=200)))
+                    row_charts.append(dbc.Col(pie_chart))
+
+                rows.append(dbc.Row(row_images))
+                rows.append(dbc.Row(row_charts))
 
             return rows
-
         else:
-            return [html.P("There is no image saved for this trend")]
+            return html.P("There is no image saved for this trend")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
