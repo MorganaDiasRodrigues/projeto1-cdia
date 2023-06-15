@@ -1,9 +1,19 @@
 {
     "#SpiderManAcrossTheSpiderVerse": {
-        "images": [
-            {"path": "../imgs/spider1"},
-            {"path": "../imgs/spider2"},
-            {"path": "../imgs/spider3"}
-        ]
+      "images": [
+        {
+          "path": "assets/spider1.jpg",
+          "dominant_colors": ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"]
+        },
+        {
+          "path": "assets/spider2.jpg",
+          "dominant_colors": ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"]
+        },
+        {
+          "path": "assets/spider3.jpg",
+          "dominant_colors": ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"]
+        }
+      ]
     }
-}
+  }
+  
