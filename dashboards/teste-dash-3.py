@@ -125,9 +125,13 @@ def update_trend_detail(n_clicks, labels):
         selected_trend = labels[selected_index]
         selected_trend_no_hash = selected_trend.lstrip('#')  # Strip the '#' from the trend name
 
-        trend_link_styles = [{'color': 'blue', 'fontFamily': 'Roboto, sans-serif'} if idx == selected_index else {'fontFamily': 'Roboto, sans-serif'} for idx in range(len(n_clicks))]
+        trend_link_styles = [
+            {'color': 'blue', 'fontFamily': 'Roboto, sans-serif'} if idx == selected_index
+            else {'fontFamily': 'Roboto, sans-serif'}
+            for idx in range(len(n_clicks))
+        ]
 
-        if selected_trend_no_hash in images_dict:  # Use the no hash trend name for images_dict
+        if selected_trend_no_hash in images_dict:
             images = images_dict[selected_trend_no_hash]['images']
 
             rows = []
@@ -143,13 +147,13 @@ def update_trend_detail(n_clicks, labels):
                     pie_chart = dcc.Graph(
                         figure=go.Figure(data=[go.Pie(
                             labels=color_names,
-                            values=color_percentages,  # Add the color percentages
-                            hoverinfo='label+percent',  # Show the label and percentage on hover
+                            values=color_percentages,
+                            hoverinfo='label+percent',
                             textinfo='none',
                             hole=0.3,
                             marker=dict(colors=color_names, line=dict(color='#FFFFFF', width=1))
                         )]),
-                        config={'displayModeBar': False}  # Hide the mode bar
+                        config={'displayModeBar': False}
                     )
 
                     image_col = dbc.Col(html.Img(src=encode_image(image['path']), style={'maxHeight': '350px', 'width': 'auto'}))
@@ -163,11 +167,12 @@ def update_trend_detail(n_clicks, labels):
                 row = dbc.Row(row_charts)
                 rows.append(row)
             
-            # Show the associated person name if it exists in ner_persons.json
-            if selected_trend in trends_people_dict:  # Use the trend name with hash for trends_people_dict
-                rows.append(html.P(f"Most mentioned person: {trends_people_dict[selected_trend]}"))
+            person_name = trends_people_dict.get(selected_trend, None)
+            if person_name:
+                person_text = html.P(f"Most mentioned person: {person_name}", style={'fontFamily': 'Roboto, sans-serif-bold', 'textAlign': 'center', 'fontSize': '20px', 'fontWeight': 'bold'})
+                rows.insert(0, person_text)
             
-            trend_message_style = {'display': 'none'}  # Hide the message
+            trend_message_style = {'display': 'none'}
 
             return trend_link_styles, dbc.Container(rows), trend_message_style, ""
         else:
