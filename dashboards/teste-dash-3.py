@@ -60,8 +60,9 @@ def update_time_buttons(n_clicks, labels):
 
         available_times = list(date_time_trends[selected_date].keys())
 
-        time_buttons = [html.Button(time, id={'type': 'time-button', 'index': i, 'date': selected_date}, n_clicks=0) for i, time in
+        time_buttons = [html.Button(time, id={'type': 'time-button', 'index': i, 'date': selected_date}, n_clicks=0, className='time-button') for i, time in
                 enumerate(available_times)]
+
 
         date_message_style = {'display': 'none'}  # Hide the message
 
