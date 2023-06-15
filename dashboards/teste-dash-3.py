@@ -112,12 +112,13 @@ def update_trend_detail(n_clicks, labels):
         button_info = json.loads(button_id)
         selected_index = button_info['index']
         selected_date = button_info['date']
-        selected_trend = labels[selected_index].strip("#")
+        selected_trend = labels[selected_index]
+        selected_trend_no_hash = selected_trend.lstrip('#')  # Strip the '#' from the trend name
 
         trend_link_styles = [{'color': 'pink'} if idx == selected_index else {} for idx in range(len(n_clicks))]
 
-        if selected_trend in images_dict:
-            images = images_dict[selected_trend]['images']
+        if selected_trend_no_hash in images_dict:  # Use the no hash trend name for images_dict
+            images = images_dict[selected_trend_no_hash]['images']
 
             rows = []
             for i in range(0, len(images), 3):
@@ -153,8 +154,8 @@ def update_trend_detail(n_clicks, labels):
                 rows.append(row)
             
             # Show the associated person name if it exists in ner_persons.json
-            if selected_trend in trends_people_dict:
-                rows.append(html.P(f"Associated Person: {trends_people_dict[selected_trend]}"))
+            if selected_trend in trends_people_dict:  # Use the trend name with hash for trends_people_dict
+                rows.append(html.P(f"Most mentioned person: {trends_people_dict[selected_trend]}"))
             
             trend_message_style = {'display': 'none'}  # Hide the message
 
