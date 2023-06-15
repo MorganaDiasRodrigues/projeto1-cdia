@@ -72,8 +72,7 @@ def update_figure(n_clicks, labels):
 
         trends = date_time_trends[selected_date][selected_time]
 
-        ordered_list = html.Ol([html.Li(dcc.Link(trend, id={'type': 'trend-link', 'index': i, 'date': selected_date},
-                                                 href='#', style={'font-family': 'Arial, Helvetica, sans-serif'}))
+        ordered_list = html.Ol([html.Li(html.A(trend, id={'type': 'trend-link', 'index': i, 'date': selected_date}, href='#', style={'font-family': 'Arial, Helvetica, sans-serif'}))
                                 for i, trend in enumerate(trends)])
 
         return ordered_list
@@ -91,7 +90,9 @@ def update_trend_detail(n_clicks, labels):
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_info = json.loads(button_id)
-        selected_trend = labels[button_info['index']].strip("#")
+        selected_index = button_info['index']
+        selected_date = button_info['date']
+        selected_trend = labels[selected_index].strip("#")
 
         if selected_trend in images_dict:
             images = images_dict[selected_trend]['images']
@@ -117,6 +118,9 @@ def update_trend_detail(n_clicks, labels):
             return rows
         else:
             return html.P("There is no image saved for this trend")
+
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
