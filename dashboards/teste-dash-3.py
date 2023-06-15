@@ -14,7 +14,7 @@ import plotly.graph_objects as go
 with open('../trends-data/date_time_trends.json', 'r') as f:
     date_time_trends = json.load(f)
 
-with open('trends_images.json', 'r') as f:
+with open('../trends-scripts/trends_images.json', 'r') as f:
     images_dict = json.load(f)
 
 available_dates = list(date_time_trends.keys())
