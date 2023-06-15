@@ -23,7 +23,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_
 
 def encode_image(image_file):
     encoded = base64.b64encode(open(image_file, 'rb').read())
-    return f'data:image/png;base64,{encoded.decode()}'
+    return f'data:image/jpeg;base64,{encoded.decode()}'
 
 # Define the app layout
 app.layout = html.Div([
@@ -32,9 +32,8 @@ app.layout = html.Div([
     ], id='date-buttons'),
     html.Div(id='time-buttons'),
     html.Div(id='graph'),
-    html.Div(id='trend-detail')
+    html.Div(id='trend-detail', children=html.Div(style={'height': '400px'}))  # added empty space
 ])
-
 
 @app.callback(
     Output('time-buttons', 'children'),
@@ -54,7 +53,6 @@ def update_time_buttons(n_clicks, labels):
         available_times = list(date_time_trends[selected_date].keys())
         return [html.Button(time, id={'type': 'time-button', 'index': i, 'date': selected_date}, n_clicks=0) for i, time in
                 enumerate(available_times)]
-
 
 @app.callback(
     Output('graph', 'children'),
@@ -79,7 +77,12 @@ def update_figure(n_clicks, labels):
                                 for i, trend in enumerate(trends)])
         return ordered_list
 
-
+@app.callback(
+    Output('trend-detail', 'children'),
+    Input({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'n_clicks'),
+    State({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'children'),
+    prevent_initial_call=True
+)
 def display_trend_detail(n_clicks, labels):
     ctx = dash.callback_context
     if not ctx.triggered:
