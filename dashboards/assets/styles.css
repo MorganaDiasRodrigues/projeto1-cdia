@@ -17,4 +17,7 @@ body {
     border-color: #004085;
 }
 
-
+.trend-link {
+    color: green;
+    font-family: 'Roboto', sans-serif;
+}

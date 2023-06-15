@@ -22,7 +22,7 @@ with open('../trends-data/ner_persons.json', 'r') as f:  # Change to the actual 
 
 available_dates = list(date_time_trends.keys())
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, assets_folder='assets')
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, assets_folder='assets', assets_url_path='/assets')
 
 def encode_image(image_file):
     encoded = base64.b64encode(open(image_file, 'rb').read())
@@ -63,7 +63,6 @@ def update_time_buttons(n_clicks, labels):
         time_buttons = [html.Button(time, id={'type': 'time-button', 'index': i, 'date': selected_date}, n_clicks=0, className='time-button') for i, time in
                 enumerate(available_times)]
 
-
         date_message_style = {'display': 'none'}  # Hide the message
 
         return time_buttons, date_message_style, ""
@@ -88,8 +87,18 @@ def update_figure(n_clicks, labels):
 
         trends = date_time_trends[selected_date][selected_time]
 
-        ordered_list = html.Ol([html.Li(html.A(trend, id={'type': 'trend-link', 'index': i, 'date': selected_date}, href='#', style={'font-family': 'Arial, Helvetica, sans-serif'}))
-                                for i, trend in enumerate(trends)])
+        ordered_list = html.Ol([
+    html.Li(
+        html.A(
+            trend,
+            id={'type': 'trend-link', 'index': i, 'date': selected_date},
+            href='#',
+            className='trend-link'
+        )
+    )
+    for i, trend in enumerate(trends)
+])
+
 
         time_message_style = {'display': 'none'}  # Hide the message
 
@@ -116,7 +125,7 @@ def update_trend_detail(n_clicks, labels):
         selected_trend = labels[selected_index]
         selected_trend_no_hash = selected_trend.lstrip('#')  # Strip the '#' from the trend name
 
-        trend_link_styles = [{'color': 'pink'} if idx == selected_index else {} for idx in range(len(n_clicks))]
+        trend_link_styles = [{'color': 'blue', 'fontFamily': 'Roboto, sans-serif'} if idx == selected_index else {'fontFamily': 'Roboto, sans-serif'} for idx in range(len(n_clicks))]
 
         if selected_trend_no_hash in images_dict:  # Use the no hash trend name for images_dict
             images = images_dict[selected_trend_no_hash]['images']
