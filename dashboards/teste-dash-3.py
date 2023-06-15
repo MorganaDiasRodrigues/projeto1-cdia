@@ -101,11 +101,13 @@ def display_trend_detail(n_clicks, labels):
             hex_codes = list(dominant_colors.keys())
             color_proportions = list(dominant_colors.values())
             encoded_image = encode_image(image_path)
-            image = html.Img(src=encoded_image, style={'width': '200px', 'height': '200px'})
+            image = html.Img(src=encoded_image, style={'width': '300px', 'height': '300px'})  # increased size
 
             fig = go.Figure(
-                go.Pie(labels=hex_codes, values=color_proportions, name=f"Image {i+1}", hoverinfo='label', hole=.4, 
-                       showlegend=False, pull=[0.2]*len(hex_codes))
+                go.Pie(labels=hex_codes, values=color_proportions, text=hex_codes, 
+                       name=f"Image {i+1}", hoverinfo='label', hole=.4, 
+                       showlegend=False, pull=[0.2]*len(hex_codes), textinfo='label+percent')  
+                # added hex code to pie chart and show percentage of each color
             )
 
             fig.update_layout(
@@ -113,11 +115,11 @@ def display_trend_detail(n_clicks, labels):
                 margin=dict(t=10, b=10, l=10, r=10)
             )
 
-            pie_chart = dcc.Graph(figure=fig)
+            pie_chart = dcc.Graph(figure=fig, style={'width': '400px', 'height': '400px'})  # increased size
 
             image_and_chart.append(html.Div([image, pie_chart], style={'display': 'inline-block', 'margin': '10px'}))
 
-        return html.Div(image_and_chart, style={'display': 'flex', 'justify-content': 'space-around'})
+        return html.Div(image_and_chart, style={'display': 'flex', 'justify-content': 'space-around', 'align-items': 'center'})
 
 
 if __name__ == '__main__':
