@@ -98,29 +98,36 @@ def update_trend_detail(n_clicks, labels):
             images = images_dict[selected_trend]['images']
 
             rows = []
-            for i in range(0, len(images), 2):
+            for i in range(0, len(images), 3):
                 row_images = []
                 row_charts = []
-                for j in range(i, min(i + 2, len(images))):
+                for j in range(i, min(i + 3, len(images))):
                     image = images[j]
                     colors = image['dominant_colors']
                     color_names = list(colors.keys())
                     color_values = list(colors.values())
 
-                    pie_chart = dcc.Graph(figure=go.Figure(data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]))
+                    pie_chart = dcc.Graph(
+                        figure=go.Figure(data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]),
+                        config={'displayModeBar': False}  # Hide the mode bar
+                    )
 
-                    row_images.append(dbc.Col(html.Img(src=encode_image(image['path']), height=200)))
-                    row_charts.append(dbc.Col(pie_chart))
+                    image_col = dbc.Col(html.Img(src=encode_image(image['path']), height=400))
+                    chart_col = dbc.Col([
+                        dbc.Row(html.Div(pie_chart))
+                    ], style={'textAlign': 'center'})
 
-                rows.append(dbc.Row(row_images))
-                rows.append(dbc.Row(row_charts))
+                    row_images.append(image_col)
+                    row_charts.append(chart_col)
 
-            return rows
+                row = dbc.Row(row_images)
+                rows.append(row)
+                row = dbc.Row(row_charts)
+                rows.append(row)
+
+            return dbc.Container(rows)
         else:
             return html.P("There is no image saved for this trend")
-
-
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
