@@ -8,7 +8,7 @@ import json
 import requests
 from selenium.common.exceptions import NoSuchElementException
 
-with open('trends-data/processed_trends.json', 'r') as file:
+with open('../trends-data/processed_trends.json', 'r') as file:
     trends = file.readline()
 
 trends = ast.literal_eval(trends)

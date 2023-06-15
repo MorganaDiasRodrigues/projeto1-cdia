@@ -6,6 +6,9 @@ import json
 
 def get_dominant_colors(image_path, n_colors):
     image = cv2.imread(image_path)
+    if image is None:  # Add this check to see if the image was properly read
+        print(f"Could not read image: {image_path}")
+        return None
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = image.reshape(-1, 3)
 
@@ -30,6 +33,9 @@ def main():
         if image_file.endswith('.jpg') or image_file.endswith('.png'):  # check for image files
             image_path = os.path.join(base_path, image_file)
             dominant_colors = get_dominant_colors(image_path, 5)
+
+            if dominant_colors is None:  # Check if dominant colors were found
+                continue
 
             # Extract trend name from the filename by removing the extension and any trailing numbers
             trend = os.path.splitext(image_file)[0].rstrip('-1234567890')

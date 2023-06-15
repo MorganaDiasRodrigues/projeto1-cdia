@@ -17,6 +17,9 @@ with open('../trends-data/date_time_trends.json', 'r') as f:
 with open('../trends-data/trends_images.json', 'r') as f:
     images_dict = json.load(f)
 
+with open('../trends-data/ner_persons.json', 'r') as f:  # Change to the actual path of your JSON file
+    trends_people_dict = json.load(f)
+
 available_dates = list(date_time_trends.keys())
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
@@ -148,7 +151,11 @@ def update_trend_detail(n_clicks, labels):
                 rows.append(row)
                 row = dbc.Row(row_charts)
                 rows.append(row)
-
+            
+            # Show the associated person name if it exists in ner_persons.json
+            if selected_trend in trends_people_dict:
+                rows.append(html.P(f"Associated Person: {trends_people_dict[selected_trend]}"))
+            
             trend_message_style = {'display': 'none'}  # Hide the message
 
             return trend_link_styles, dbc.Container(rows), trend_message_style, ""
