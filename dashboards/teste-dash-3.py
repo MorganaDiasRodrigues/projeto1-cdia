@@ -11,7 +11,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 # Load JSON data
-with open('date-time-trends.json', 'r') as f:
+with open('../trends-data/date_time_trends.json', 'r') as f:
     date_time_trends = json.load(f)
 
 with open('trends_images.json', 'r') as f:
@@ -80,12 +80,6 @@ def update_figure(n_clicks, labels):
         return ordered_list
 
 
-@app.callback(
-    Output('trend-detail', 'children'),
-    Input({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'n_clicks'),
-    State({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'children'),
-    prevent_initial_call=True
-)
 def display_trend_detail(n_clicks, labels):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -100,12 +94,14 @@ def display_trend_detail(n_clicks, labels):
         image_and_chart = []
         for i, img in enumerate(image_data):
             image_path = img['path']
-            hex_codes = img['dominant_colors']
+            dominant_colors = img['dominant_colors']
+            hex_codes = list(dominant_colors.keys())
+            color_proportions = list(dominant_colors.values())
             encoded_image = encode_image(image_path)
             image = html.Img(src=encoded_image, style={'width': '200px', 'height': '200px'})
 
             fig = go.Figure(
-                go.Pie(labels=hex_codes, values=[1]*len(hex_codes), name=f"Image {i+1}", hoverinfo='label', hole=.4, 
+                go.Pie(labels=hex_codes, values=color_proportions, name=f"Image {i+1}", hoverinfo='label', hole=.4, 
                        showlegend=False, pull=[0.2]*len(hex_codes))
             )
 
