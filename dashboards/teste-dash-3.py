@@ -92,23 +92,26 @@ def update_figure(n_clicks, labels):
         return ordered_list, time_message_style, ""
 
 @app.callback(
-    Output('trend-detail', 'children'),
-    Output('trend-message', 'style'),
-    Output('trend-message', 'children'),
-    Input({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'n_clicks'),
-    State({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'children'),
+    [Output({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'style'),
+     Output('trend-detail', 'children'),
+     Output('trend-message', 'style'),
+     Output('trend-message', 'children')],
+    [Input({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'n_clicks')],
+    [State({'type': 'trend-link', 'index': ALL, 'date': ALL}, 'children')],
     prevent_initial_call=True
 )
 def update_trend_detail(n_clicks, labels):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update, {'margin': '10px 0'}, "Select a trend to see the color palette"
+        return [{}]*len(n_clicks), dash.no_update, {'margin': '10px 0'}, "Select a trend to see the color palette"
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_info = json.loads(button_id)
         selected_index = button_info['index']
         selected_date = button_info['date']
         selected_trend = labels[selected_index].strip("#")
+
+        trend_link_styles = [{'color': 'pink'} if idx == selected_index else {} for idx in range(len(n_clicks))]
 
         if selected_trend in images_dict:
             images = images_dict[selected_trend]['images']
@@ -148,9 +151,10 @@ def update_trend_detail(n_clicks, labels):
 
             trend_message_style = {'display': 'none'}  # Hide the message
 
-            return dbc.Container(rows), trend_message_style, ""
+            return trend_link_styles, dbc.Container(rows), trend_message_style, ""
         else:
-            return html.P("There is no image saved for this trend"), {'margin': '10px 0'}, ""
+            return trend_link_styles, html.P("There is no image saved for this trend"), {'margin': '10px 0'}, ""
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
