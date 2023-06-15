@@ -90,28 +90,31 @@ def update_trend_detail(n_clicks, labels):
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
         button_info = json.loads(button_id)
-        selected_trend = labels[button_info['index']]
-        selected_trend_stripped = selected_trend.strip("#")  # Remove "#" from the trend
+        selected_trend = labels[button_info['index']].strip("#")
 
         # Check if there are images for this trend
-        if selected_trend_stripped in images_dict:
-            image_elements = []
-            for image in images_dict[selected_trend_stripped]['images']:
-                image_elements.append(html.Img(src=encode_image(image['path']), height=200))
+        if selected_trend in images_dict:
+            images = images_dict[selected_trend]['images']
 
+            rows = []
+            for i, image in enumerate(images):
                 colors = image['dominant_colors']
                 color_names = list(colors.keys())
                 color_values = list(colors.values())
 
-                pie_chart = dcc.Graph(id='color-chart', figure=go.Figure(
-                    data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]))
+                pie_chart = dcc.Graph(figure=go.Figure(data=[go.Pie(labels=color_names, values=color_values, hole=0.3)]))
 
-                image_elements.append(pie_chart)
+                rows.append(
+                    dbc.Row([
+                        dbc.Col(html.Img(src=encode_image(image['path']), height=200), width=6),
+                        dbc.Col(pie_chart, width=6)
+                    ])
+                )
+
+            return rows
+
         else:
-            image_elements = [html.P("There is no image saved for this trend")]
-
-        return image_elements
-
+            return [html.P("There is no image saved for this trend")]
 
 if __name__ == '__main__':
     app.run_server(debug=True)
