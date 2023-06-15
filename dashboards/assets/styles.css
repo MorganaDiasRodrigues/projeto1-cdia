@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.date-button, .time-button {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    margin: 5px;
+}
+
+.date-button:hover, .time-button:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+

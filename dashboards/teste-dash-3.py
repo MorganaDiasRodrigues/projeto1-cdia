@@ -22,7 +22,7 @@ with open('../trends-data/ner_persons.json', 'r') as f:  # Change to the actual 
 
 available_dates = list(date_time_trends.keys())
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, assets_folder='assets')
 
 def encode_image(image_file):
     encoded = base64.b64encode(open(image_file, 'rb').read())
@@ -31,7 +31,7 @@ def encode_image(image_file):
 # Define the app layout
 app.layout = html.Div([
     html.Div(id='date-buttons-container', children=[
-        html.Button(date, id={'type': 'date-button', 'index': i}, n_clicks=0, className='date-button', style={'background-color': 'lightblue'}) for i, date in enumerate(available_dates)
+        html.Button(date, id={'type': 'date-button', 'index': i}, n_clicks=0, className='date-button') for i, date in enumerate(available_dates)
     ]),
     html.Div(id='time-buttons'),
     html.Div(id='graph'),
