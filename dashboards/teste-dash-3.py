@@ -28,7 +28,7 @@ def encode_image(image_file):
 # Define the app layout
 app.layout = html.Div([
     html.Div(id='date-buttons-container', children=[
-        html.Button(date, id={'type': 'date-button', 'index': i}, n_clicks=0, className='date-button') for i, date in enumerate(available_dates)
+        html.Button(date, id={'type': 'date-button', 'index': i}, n_clicks=0, className='date-button', style={'background-color': 'lightblue'}) for i, date in enumerate(available_dates)
     ]),
     html.Div(id='time-buttons'),
     html.Div(id='graph'),
@@ -121,11 +121,13 @@ def update_trend_detail(n_clicks, labels):
                     image = images[j]
                     colors = image['dominant_colors']
                     color_names = list(colors.keys())
+                    color_percentages = [round(value * 100, 2) for value in colors.values()]
 
                     pie_chart = dcc.Graph(
                         figure=go.Figure(data=[go.Pie(
                             labels=color_names,
-                            hoverinfo='label',
+                            values=color_percentages,  # Add the color percentages
+                            hoverinfo='label+percent',  # Show the label and percentage on hover
                             textinfo='none',
                             hole=0.3,
                             marker=dict(colors=color_names, line=dict(color='#FFFFFF', width=1))
@@ -149,7 +151,6 @@ def update_trend_detail(n_clicks, labels):
             return dbc.Container(rows), trend_message_style, ""
         else:
             return html.P("There is no image saved for this trend"), {'margin': '10px 0'}, ""
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
